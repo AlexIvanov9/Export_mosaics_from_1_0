@@ -20,7 +20,7 @@ def export_ortho(fieldinfo):
     Using this information Run export mosaic 1.0
     """
     
-    export_path = fieldinfo['ProjectPath']
+    export_path = fieldinfo['Mosaic']
     try:
         project = PhotoScan.app.document
         project.open(fieldinfo['ProjectPath'])
