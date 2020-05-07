@@ -11,6 +11,7 @@ import PhotoScan
 import time
 import mosaic
 import json
+import os
 
 
 
@@ -26,13 +27,14 @@ def export_ortho(fieldinfo):
         project.open(fieldinfo['ProjectPath'])
         
         dx, dy = mosaic.get_resolution(fieldinfo['Flight_id'], fieldinfo['Field'], fieldinfo['Camera'])
-        
-        status = project.activeChunk.exportOrthophoto(
-        export_path, format="tif", color_correction=False, blending='average', dx=dx, dy=dy,
-        projection=project.activeChunk.projection)
-        if status is False:
-            print("Bad")
-            # Need add log file with errors 
+        if not os.path.isfile(export_path):
+            
+            status = project.activeChunk.exportOrthophoto(
+            export_path, format="tif", color_correction=False, blending='average', dx=dx, dy=dy,
+            projection=project.activeChunk.projection)
+            if status is False:
+                print("Bad")
+                # Need add log file with errors 
     except Exception as e:
         # Need add log file with errors 
         print(e)
