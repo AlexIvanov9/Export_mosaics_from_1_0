@@ -8,7 +8,6 @@ Run from Photoscan 1.0
 """
 
 import PhotoScan
-import os
 import time
 import mosaic
 import json
