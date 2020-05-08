@@ -13,17 +13,22 @@ def get_flights(daysback = 0):
     """
     get flights from days back. 0 is today. 
     running function in different time zones might need adjustment on daysback
-
     """
-    dbops.dbio.reload_database()
-    flights = dbops.dbio.get_table("Flights")
-    today = pd.to_datetime("today").date()
-    past_date = pd.datetime(today.year,today.month, today.day - daysback).date()
-    f = flights[flights.Date == past_date]
-    past_flights = list(f.index.values)
-    print("\nFlights from Date {}: ".format(past_date))
+    import worksclient as wc
     
-    return past_flights
+    now_time = datetime.datetime.today()
+    today_date = now_time.strftime("%Y-%m-%d")
+    target_time = now_time - datetime.timedelta(daysback)
+    target_date = target_time.strftime("%Y-%m-%d")
+    print("Today is {} \nGetting Flights from {}: ".format(today_date, target_date))
+    
+    flight_list = []
+    flight_dic_list = wc.Flight.list(target_date)
+    for i in flight_dic_list:
+        flight_list.append(i['id'])
+    flight_list.sort()
+    
+    return flight_list
 
 
 
