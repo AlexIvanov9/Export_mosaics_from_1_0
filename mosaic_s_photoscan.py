@@ -12,6 +12,7 @@ import time
 import mosaic
 import json
 import os
+import shutil
 
 
 
@@ -20,21 +21,25 @@ def export_ortho(fieldinfo):
     Read JSON file with flight path, flight id and field id
     Using this information Run export mosaic 1.0
     """
-    
-    export_path = fieldinfo['Mosaic']
+    # path to export mosaic on Windows with A:/Flights ....
+    export_pathA = os.path.abspath(fieldinfo['Mosaic'])
+    if os.path.exists(export_pathA):
+        return
+    # path to export mosaic on Windows to C drive, for improving speed of export
+    localexport = os.path.join('C:\Daily artifacts', os.path.basename(export_pathA))
     try:
         project = PhotoScan.app.document
         project.open(fieldinfo['ProjectPath'])
         
         dx, dy = mosaic.get_resolution(fieldinfo['Flight_id'], fieldinfo['Field'], fieldinfo['Camera'])
-        if not os.path.isfile(export_path):
-            
-            status = project.activeChunk.exportOrthophoto(
-            export_path, format="tif", color_correction=False, blending='average', dx=dx, dy=dy,
+        status = project.activeChunk.exportOrthophoto(localexport, format="tif", color_correction=False, blending='average', dx=dx, dy=dy,
             projection=project.activeChunk.projection)
-            if status is False:
-                print("Bad")
-                # Need add log file with errors 
+        
+        if status is True:
+            if not os.path.isdir(os.path.dirname(export_pathA)):
+                os.makedirs(os.path.dirname(export_pathA))
+            shutil.copy2(localexport,export_pathA)
+            os.remove(localexport)
     except Exception as e:
         # Need add log file with errors 
         print(e)
@@ -85,7 +90,7 @@ def check_lines(txt_file):
         return False
     
 
-projectpath = 'C:\Daily artifacts\ProjectPath.txt'
+projectpath = 'A:\Distributer team\ProjectPath9.txt'
 
 
 
